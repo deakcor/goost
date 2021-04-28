@@ -1,6 +1,7 @@
 #include "image_frames.h"
 
 LoadImageFramesFunction ImageFrames::load_gif_func = nullptr;
+SaveImageFramesFunction ImageFrames::save_gif_func = nullptr;
 
 Error ImageFrames::load(const String &p_path, int max_frames) {
 	clear();
@@ -23,6 +24,25 @@ Error ImageFrames::load_gif_from_buffer(const PoolByteArray &p_data, int max_fra
 		ERR_PRINTS("Unrecognized image.");
 		return ERR_FILE_UNRECOGNIZED;
 	}
+}
+
+Error ImageFrames::save_gif(const String &p_path) {
+	clear();
+	String ext = p_path.get_extension().to_lower();
+	if (ext == "gif") {
+		Ref<ImageFrames> image_frames = Ref<ImageFrames>(this);
+		return save_gif_func(image_frames, p_path);
+	} else {
+		ERR_PRINTS("Unrecognized image: " + p_path);
+		return ERR_FILE_UNRECOGNIZED;
+	}
+}
+
+Error ImageFrames::save_gif_to_buffer() {
+	clear();
+	Ref<ImageFrames> image_frames = Ref<ImageFrames>(this);
+	const PoolByteArray p_data = PoolByteArray();
+	return save_gif_func(image_frames, p_data);
 }
 
 void ImageFrames::add_frame(const Ref<Image> &p_image, float p_delay, int p_idx) {
@@ -79,6 +99,9 @@ void ImageFrames::clear() {
 void ImageFrames::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("load", "path", "max_frames"), &ImageFrames::load, DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("load_gif_from_buffer", "data", "max_frames"), &ImageFrames::load_gif_from_buffer, DEFVAL(0));
+
+	ClassDB::bind_method(D_METHOD("save_gif", "path"), &ImageFrames::save_gif);
+	ClassDB::bind_method(D_METHOD("save_gif_to_buffer"), &ImageFrames::save_gif_to_buffer);
 
 	ClassDB::bind_method(D_METHOD("add_frame", "image", "delay", "idx"), &ImageFrames::add_frame, DEFVAL(-1));
 	ClassDB::bind_method(D_METHOD("remove_frame", "idx"), &ImageFrames::remove_frame);
