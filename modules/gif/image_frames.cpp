@@ -31,18 +31,16 @@ Error ImageFrames::save_gif(const String &p_path) {
 	clear();
 	String ext = p_path.get_extension().to_lower();
 	if (ext == "gif") {
-		Ref<ImageFrames> image_frames = Ref<ImageFrames>(this);
-		return save_gif_func(image_frames, p_path);
+		return save_gif_func(p_path, Ref<ImageFrames>((ImageFrames *)this));
 	} else {
 		ERR_PRINTS("Unrecognized image: " + p_path);
 		return ERR_FILE_UNRECOGNIZED;
 	}
 }
 
-PoolByteArray ImageFrames::save_gif_to_buffer() {
-	clear();
-	Ref<ImageFrames> image_frames = Ref<ImageFrames>(this);
-	return save_gif_to_buffer_func(image_frames);
+PoolVector<uint8_t> ImageFrames::save_gif_to_buffer() const {
+	//clear();
+	return save_gif_to_buffer_func(Ref<ImageFrames>((ImageFrames *)this));
 }
 
 void ImageFrames::add_frame(const Ref<Image> &p_image, float p_delay, int p_idx) {

@@ -6,8 +6,8 @@
 class ImageFrames;
 
 typedef Error (*LoadImageFramesFunction)(Ref<ImageFrames> &r_image_frames, const Variant &source, int max_frames);
-typedef Error (*SaveImageFramesFunction)(Ref<ImageFrames> &r_image_frames, const Variant &source);
-typedef PoolByteArray (*SaveImageFramesToBufferFunction)(Ref<ImageFrames> &r_image_frames);
+typedef Error (*SaveImageFramesFunction)(const String &p_path, const Ref<ImageFrames> &r_image_frames);
+typedef PoolVector<uint8_t> (*SaveImageFramesToBufferFunction)(const Ref<ImageFrames> &r_image_frames);
 
 class ImageFrames : public Resource {
 	GDCLASS(ImageFrames, Resource);
@@ -30,7 +30,7 @@ public:
 	Error load_gif_from_buffer(const PoolByteArray &p_data, int max_frames = 0);
 
 	Error save_gif(const String &p_path);
-	PoolByteArray save_gif_to_buffer();
+	PoolVector<uint8_t> save_gif_to_buffer() const;
 
 	void add_frame(const Ref<Image> &p_image, float p_delay, int p_idx = -1);
 	void remove_frame(int p_idx);

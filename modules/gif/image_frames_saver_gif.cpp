@@ -11,16 +11,16 @@ int writeFromFile(GifFileType *gif, const GifByteType *data, int length) {
     return length;
 }
 
-GifFileType* _open(void *source) {
-	int err = 0;
-	GifFileType* gifFile = EGifOpen(source, writeFromFile, &err);
-	return gifFile;
-}
+// GifFileType* _open(void *source) {
+// 	int err = 0;
+// 	GifFileType* gifFile = EGifOpen(source, writeFromFile, &err);
+// 	return gifFile;
+// }
 
 static bool _gif_write(FileAccess *f)
 {
     int error;
-    GifFileType* gifFile = _open(f);
+    GifFileType* gifFile = EGifOpen(f, writeFromFile, &error);
     if (!gifFile) {
         ERR_PRINTS("Error opening file.");
         return false;
@@ -93,11 +93,34 @@ static Error _save_gif(Ref<ImageFrames> &r_image_frames, const Variant &source) 
 	}
 }
 
-static PoolByteArray _save_gif_to_buffer(Ref<ImageFrames> &r_image_frames) {
-	return PoolByteArray();
+Error ImageFramesSaverGIF::save_gif(const String &p_path, const Ref<ImageFrames> &r_image_frames) {
+
+	PoolVector<uint8_t> buffer;
+    Error err = OK;
+	FileAccess *file = FileAccess::open(p_path, FileAccess::WRITE, &err);
+	ERR_FAIL_COND_V_MSG(err, err, vformat("Can't save GIF at path: '%s'.", p_path));
+
+	PoolVector<uint8_t>::Read reader = buffer.read();
+
+	file->store_buffer(reader.ptr(), buffer.size());
+	if (file->get_error() != OK && file->get_error() != ERR_FILE_EOF) {
+		memdelete(file);
+		return ERR_CANT_CREATE;
+	}
+
+	file->close();
+	memdelete(file);
+
+	return OK;
+}
+
+PoolVector<uint8_t> ImageFramesSaverGIF::save_gif_to_buffer(const Ref<ImageFrames> &r_image_frames) {
+
+    PoolVector<uint8_t> buffer;
+	return buffer;
 }
 
 ImageFramesSaverGIF::ImageFramesSaverGIF() {
-	ImageFrames::save_gif_func = _save_gif;
-    ImageFrames::save_gif_to_buffer_func = _save_gif_to_buffer;
+	ImageFrames::save_gif_func = &save_gif;
+    ImageFrames::save_gif_to_buffer_func = &save_gif_to_buffer;
 }
