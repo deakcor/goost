@@ -3,6 +3,7 @@
 #include "image_frames.h"
 #include "image_frames_loader.h"
 #include "image_frames_loader_gif.h"
+#include "image_frames_saver_gif.h"
 
 #ifdef TOOLS_ENABLED
 #include "editor/import/resource_importer_animated_texture.h"
@@ -10,6 +11,7 @@
 #endif
 
 static ImageFramesLoaderGIF *image_frames_loader_gif = nullptr;
+static Ref<ImageFramesSaverGIF> image_frames_saver_gif = nullptr;
 
 static Ref<ResourceFormatLoaderImageFrames> resource_format_image_frames;
 static Ref<ResourceFormatLoaderAnimatedTexture> resource_format_animated_texture;
@@ -27,6 +29,9 @@ void register_gif_types() {
 
 	resource_format_sprite_frames.instance();
 	ResourceLoader::add_resource_format_loader(resource_format_sprite_frames);
+
+	image_frames_saver_gif.instance();
+	ResourceSaver::add_resource_format_saver(image_frames_saver_gif);
 
 	ClassDB::register_class<ImageFrames>();
 
@@ -54,4 +59,7 @@ void unregister_gif_types() {
 
 	ResourceLoader::remove_resource_format_loader(resource_format_sprite_frames);
 	resource_format_sprite_frames.unref();
+
+	ResourceSaver::remove_resource_format_saver(image_frames_saver_gif);
+	image_frames_saver_gif.unref();
 }

@@ -1,9 +1,10 @@
 #ifndef IMAGE_FRAMES_SAVER_GIF_H
 #define IMAGE_FRAMES_SAVER_GIF_H
 
-#include "core/os/file_access.h"
+#include "core/io/resource_saver.h"
+#include "image_frames.h"
 
-class ImageFramesSaverGIF {
+class ImageFramesSaverGIF : public ResourceFormatSaver {
     //bool _gif_write(const char* fileName);
 public:
     ImageFramesSaverGIF();

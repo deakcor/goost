@@ -83,7 +83,9 @@ static Error _save_gif(Ref<ImageFrames> &r_image_frames, const Variant &source) 
 			ERR_PRINTS("Error opening file '" + String(source) + "'.");
 			return err;
 		}
-		_gif_write(f);
+		//_gif_write(f);
+        f->close();
+		memdelete(f);
 		return err;
 	} else {
         return OK;
@@ -91,6 +93,11 @@ static Error _save_gif(Ref<ImageFrames> &r_image_frames, const Variant &source) 
 	}
 }
 
+static PoolByteArray _save_gif_to_buffer(Ref<ImageFrames> &r_image_frames) {
+	return PoolByteArray();
+}
+
 ImageFramesSaverGIF::ImageFramesSaverGIF() {
 	ImageFrames::save_gif_func = _save_gif;
+    ImageFrames::save_gif_to_buffer_func = _save_gif_to_buffer;
 }

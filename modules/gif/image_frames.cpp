@@ -2,6 +2,7 @@
 
 LoadImageFramesFunction ImageFrames::load_gif_func = nullptr;
 SaveImageFramesFunction ImageFrames::save_gif_func = nullptr;
+SaveImageFramesToBufferFunction ImageFrames::save_gif_to_buffer_func = nullptr;
 
 Error ImageFrames::load(const String &p_path, int max_frames) {
 	clear();
@@ -38,11 +39,10 @@ Error ImageFrames::save_gif(const String &p_path) {
 	}
 }
 
-Error ImageFrames::save_gif_to_buffer() {
+PoolByteArray ImageFrames::save_gif_to_buffer() {
 	clear();
 	Ref<ImageFrames> image_frames = Ref<ImageFrames>(this);
-	const PoolByteArray p_data = PoolByteArray();
-	return save_gif_func(image_frames, p_data);
+	return save_gif_to_buffer_func(image_frames);
 }
 
 void ImageFrames::add_frame(const Ref<Image> &p_image, float p_delay, int p_idx) {
