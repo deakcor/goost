@@ -6,9 +6,10 @@
 
 
 int writeFromFile(GifFileType *gif, const GifByteType *data, int length) {
-	FileAccess *f = (FileAccess *)(gif->UserData); // gif->UserData is the first parameter passed to DGifOpen.
-	f->store_buffer(data, length);
-    return length;
+	// FileAccess *f = (FileAccess *)(gif->UserData); // gif->UserData is the first parameter passed to DGifOpen.
+	// f->store_buffer(data, length);
+    // return length;
+    return 16;
 }
 
 // GifFileType* _open(void *source) {
@@ -102,7 +103,8 @@ Error ImageFramesSaverGIF::save_gif(const String &p_path, const Ref<ImageFrames>
 
 	PoolVector<uint8_t>::Read reader = buffer.read();
 
-	file->store_buffer(reader.ptr(), buffer.size());
+	//file->store_buffer(reader.ptr(), buffer.size());
+    _gif_write(file);
 	if (file->get_error() != OK && file->get_error() != ERR_FILE_EOF) {
 		memdelete(file);
 		return ERR_CANT_CREATE;

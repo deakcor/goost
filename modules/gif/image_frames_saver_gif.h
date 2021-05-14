@@ -14,4 +14,6 @@ public:
     ImageFramesSaverGIF();
 };
 
+struct GifFileType;
+
 #endif // IMAGE_FRAMES_SAVER_GIF_H
