@@ -4,12 +4,26 @@
 #include "scene/resources/texture.h"
 #include "thirdparty/giflib/gif_lib.h"
 
+struct GIFBuffer { // Used to read the GIF data from a buffer.
+	GifByteType *data;
+	int size;
+	int index;
+    int alloc;
+};
 
-int writeFromFile(GifFileType *gif, const GifByteType *data, int length) {
-	// FileAccess *f = (FileAccess *)(gif->UserData); // gif->UserData is the first parameter passed to DGifOpen.
-	// f->store_buffer(data, length);
-    // return length;
-    return 16;
+int gif_buffer_write(GifFileType *gif, const GifByteType *data, int length) {
+	GIFBuffer *f = (GIFBuffer *)(gif->UserData);
+    if (f->size + length > f->alloc) {
+        int new_size = f->alloc * 1.25;
+        if (new_size < f->size + length) {
+            new_size = f->size + length;
+        }
+		f->data = (GifByteType *)realloc(f->data, new_size);
+        f->alloc = new_size;
+    }
+    memcpy(f->data + f->size, data, length);
+    f->size += length;
+    return length;
 }
 
 // GifFileType* _open(void *source) {
@@ -18,13 +32,15 @@ int writeFromFile(GifFileType *gif, const GifByteType *data, int length) {
 // 	return gifFile;
 // }
 
-static bool _gif_write(FileAccess *f)
-{
+static void *_gif_write() {
+    GIFBuffer f = {0,};
     int error;
-    GifFileType* gifFile = EGifOpen(f, writeFromFile, &error);
+    
+    GifFileType* gifFile = EGifOpen(&f, gif_buffer_write, &error);
+    //GifFileType* gifFile = EGifOpenFileName(filename, false, &error);
     if (!gifFile) {
         ERR_PRINTS("Error opening file.");
-        return false;
+        return NULL;
     }
 
     GifColorType colors[64];
@@ -69,29 +85,11 @@ static bool _gif_write(FileAccess *f)
     if (EGifSpew(gifFile) == GIF_ERROR) {
         ERR_PRINTS("Error saving file ''.");
         EGifCloseFile(gifFile, &error);
-        return false;
+		return NULL;
     }
 
     EGifCloseFile(gifFile, &error);
-    return true;
-}
-
-static Error _save_gif(Ref<ImageFrames> &r_image_frames, const Variant &source) {
-	if (source.get_type() == Variant::STRING) {
-		Error err;
-        FileAccess *f = FileAccess::open(source, FileAccess::WRITE, &err);
-		if (!f) {
-			ERR_PRINTS("Error opening file '" + String(source) + "'.");
-			return err;
-		}
-		//_gif_write(f);
-        f->close();
-		memdelete(f);
-		return err;
-	} else {
-        return OK;
-		//return gif.load_from_buffer(r_image_frames, source, max_frames);
-	}
+    return f.data;
 }
 
 Error ImageFramesSaverGIF::save_gif(const String &p_path, const Ref<ImageFrames> &r_image_frames) {
@@ -104,7 +102,7 @@ Error ImageFramesSaverGIF::save_gif(const String &p_path, const Ref<ImageFrames>
 	PoolVector<uint8_t>::Read reader = buffer.read();
 
 	//file->store_buffer(reader.ptr(), buffer.size());
-    _gif_write(file);
+	void *buff = _gif_write();
 	if (file->get_error() != OK && file->get_error() != ERR_FILE_EOF) {
 		memdelete(file);
 		return ERR_CANT_CREATE;
