@@ -5,8 +5,25 @@
 
 _GoostImage *_GoostImage::singleton = nullptr;
 
+
+void _GoostImage::multiply(Ref<Image> p_image, float p_factor) {
+	GoostImage::_multiply(p_image,p_factor,true,true);
+}
+
+void _GoostImage::multiply_rgb(Ref<Image> p_image, float p_factor) {
+	GoostImage::_multiply(p_image, p_factor, true, false);
+}
+
+void _GoostImage::multiply_alpha(Ref<Image> p_image, float p_factor) {
+	GoostImage::_multiply(p_image,p_factor,false,true);
+}
+
 void _GoostImage::replace_color(Ref<Image> p_image, const Color &p_color, const Color &p_with_color) {
 	GoostImage::replace_color(p_image, p_color, p_with_color);
+}
+
+void _GoostImage::fix_transparent_viewport(Ref<Image> p_image) {
+	GoostImage::fix_transparent_viewport(p_image);
 }
 
 Ref<Image> _GoostImage::bucket_fill(Ref<Image> p_image, const Point2 &p_at, const Color &p_fill_color, bool p_fill_image, Connectivity p_con) {
@@ -91,6 +108,12 @@ Color _GoostImage::get_pixel_average(const Ref<Image> &p_image, const Rect2 &p_r
 }
 
 void _GoostImage::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("multiply", "image","factor"), &_GoostImage::multiply);
+	ClassDB::bind_method(D_METHOD("multiply_rgb", "image","factor"), &_GoostImage::multiply_rgb);
+	ClassDB::bind_method(D_METHOD("multiply_alpha", "image","factor"), &_GoostImage::multiply_alpha);
+
+	ClassDB::bind_method(D_METHOD("fix_transparent_viewport", "image"), &_GoostImage::fix_transparent_viewport);
+
 	ClassDB::bind_method(D_METHOD("replace_color", "image", "color", "with_color"), &_GoostImage::replace_color);
 	ClassDB::bind_method(D_METHOD("bucket_fill", "image", "at", "fill_color", "fill_image", "connectivity"), &_GoostImage::bucket_fill, DEFVAL(true), DEFVAL(FOUR_CONNECTED));
 	ClassDB::bind_method(D_METHOD("resize_hqx", "image", "scale"), &_GoostImage::resize_hqx, DEFVAL(2));

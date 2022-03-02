@@ -27,6 +27,13 @@ public:
 
 public:
 	// Image processing methods.
+	static void _multiply(Ref<Image> p_image, float p_factor, const bool p_rgb, const bool p_alpha);
+	static void multiply(Ref<Image> p_image, float p_factor){};
+	static void multiply_rgb(Ref<Image> p_image, float p_factor){};
+	static void multiply_alpha(Ref<Image> p_image, float p_factor){};
+
+	static void fix_transparent_viewport(Ref<Image> p_image);
+
 	static void replace_color(Ref<Image> p_image, const Color &p_color, const Color &p_with_color);
 	static Ref<Image> bucket_fill(Ref<Image> p_image, const Point2 &p_at, const Color &p_fill_color, bool p_fill_image = true, Connectivity p_con = FOUR_CONNECTED);
 	static void resize_hqx(Ref<Image> p_image, int p_scale = 2);

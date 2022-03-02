@@ -37,6 +37,12 @@ public:
 	};
 
 public:
+	void multiply(Ref<Image> p_image, float p_factor);
+	void multiply_rgb(Ref<Image> p_image, float p_factor);
+	void multiply_alpha(Ref<Image> p_image, float p_factor);
+
+	void fix_transparent_viewport(Ref<Image> p_image);
+
 	void replace_color(Ref<Image> p_image, const Color &p_color, const Color &p_with_color);
 	Ref<Image> bucket_fill(Ref<Image> p_image, const Point2 &p_at, const Color &p_fill_color, bool p_fill_image = true, Connectivity p_con = FOUR_CONNECTED);
 	void resize_hqx(Ref<Image> p_image, int p_scale);

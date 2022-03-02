@@ -11,6 +11,50 @@
 
 #include "core/local_vector.h"
 
+
+void GoostImage::_multiply(Ref<Image> p_image, float p_factor, const bool p_rgb, const bool p_alpha) {
+	ERR_FAIL_COND(p_image.is_null());
+
+	p_image->lock();
+
+	for (int y = 0; y < p_image->get_height(); ++y) {
+		for (int x = 0; x < p_image->get_width(); ++x) {
+			Color color = p_image->get_pixel(x, y);
+			if (p_rgb){
+				color.r*=p_factor;
+				color.g*=p_factor;
+				color.b*=p_factor;
+			}
+			if (p_alpha){
+				color.a*=p_factor;
+			}
+			p_image->set_pixel(x, y, color*p_factor);
+		}
+	}
+	p_image->unlock();
+}
+
+void GoostImage::fix_transparent_viewport(Ref<Image> p_image) {
+	ERR_FAIL_COND(p_image.is_null());
+
+	p_image->lock();
+
+	for (int y = 0; y < p_image->get_height(); ++y) {
+		for (int x = 0; x < p_image->get_width(); ++x) {
+			Color color = p_image->get_pixel(x, y);
+			if (color.a>0 && color.a<1){
+				color.r/=color.a;
+				color.g/=color.a;
+				color.b/=color.a;
+				p_image->set_pixel(x, y, color);
+			}
+			
+		}
+	}
+	p_image->unlock();
+}
+
+
 void GoostImage::replace_color(Ref<Image> p_image, const Color &p_color, const Color &p_with_color) {
 	ERR_FAIL_COND(p_image.is_null());
 
