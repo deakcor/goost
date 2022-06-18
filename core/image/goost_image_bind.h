@@ -41,6 +41,8 @@ public:
 	void multiply_rgb(Ref<Image> p_image, float p_factor);
 	void multiply_alpha(Ref<Image> p_image, float p_factor);
 
+	void grayscale(Ref<Image> p_image);
+
 	void fix_transparent_viewport(Ref<Image> p_image);
 
 	void replace_color(Ref<Image> p_image, const Color &p_color, const Color &p_with_color);

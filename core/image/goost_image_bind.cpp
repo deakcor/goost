@@ -18,6 +18,10 @@ void _GoostImage::multiply_alpha(Ref<Image> p_image, float p_factor) {
 	GoostImage::_multiply(p_image,p_factor,false,true);
 }
 
+void _GoostImage::grayscale(Ref<Image> p_image) {
+	GoostImage::grayscale(p_image);
+}
+
 void _GoostImage::replace_color(Ref<Image> p_image, const Color &p_color, const Color &p_with_color) {
 	GoostImage::replace_color(p_image, p_color, p_with_color);
 }
@@ -113,6 +117,7 @@ void _GoostImage::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("multiply_alpha", "image","factor"), &_GoostImage::multiply_alpha);
 
 	ClassDB::bind_method(D_METHOD("fix_transparent_viewport", "image"), &_GoostImage::fix_transparent_viewport);
+	ClassDB::bind_method(D_METHOD("grayscale", "image"), &_GoostImage::grayscale);
 
 	ClassDB::bind_method(D_METHOD("replace_color", "image", "color", "with_color"), &_GoostImage::replace_color);
 	ClassDB::bind_method(D_METHOD("bucket_fill", "image", "at", "fill_color", "fill_image", "connectivity"), &_GoostImage::bucket_fill, DEFVAL(true), DEFVAL(FOUR_CONNECTED));

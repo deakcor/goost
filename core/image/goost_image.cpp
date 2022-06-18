@@ -28,11 +28,33 @@ void GoostImage::_multiply(Ref<Image> p_image, float p_factor, const bool p_rgb,
 			if (p_alpha){
 				color.a*=p_factor;
 			}
-			p_image->set_pixel(x, y, color*p_factor);
+			p_image->set_pixel(x, y, color);
 		}
 	}
 	p_image->unlock();
 }
+
+void GoostImage::grayscale(Ref<Image> p_image) {
+	ERR_FAIL_COND(p_image.is_null());
+
+	p_image->lock();
+
+	for (int y = 0; y < p_image->get_height(); ++y) {
+		for (int x = 0; x < p_image->get_width(); ++x) {
+			Color color = p_image->get_pixel(x, y);
+			float avg = (color.r + color.g + color.b) / 3.0;
+			color.r=avg;
+			color.g=avg;
+			color.b=avg;
+			color.a=1.0;
+			p_image->set_pixel(x, y, color);
+			
+			
+		}
+	}
+	p_image->unlock();
+}
+
 
 void GoostImage::fix_transparent_viewport(Ref<Image> p_image) {
 	ERR_FAIL_COND(p_image.is_null());
